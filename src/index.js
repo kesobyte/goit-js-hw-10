@@ -1,6 +1,12 @@
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
+import SlimSelect from 'slim-select';
 
-const breedSelectEl = document.querySelector('.breed-select');
+// Initialize Slim Select
+const slimSelect = new SlimSelect({
+  select: '#single-select',
+});
+
+const breedSelectEl = document.querySelector('#single-select');
 const catInfoEl = document.querySelector('.cat-info');
 const loaderEl = document.querySelector('.loader');
 const errorEl = document.querySelector('.error');
@@ -13,13 +19,21 @@ function chooseBreed(data) {
       //console.log(data);
       loaderEl.classList.replace('loader', 'is-hidden');
 
-      let optionsMarkup = data.map(({ name, id }) => {
-        return `<option value ='${id}'>${name}</option>`;
-      });
+      //   let optionsMarkup = data.map(({ name, id }) => {
+      //     return `<option value ='${id}'>${name}</option>`;
+      //   });
 
-      breedSelectEl.insertAdjacentHTML('beforeend', optionsMarkup);
-      breedSelectEl.classList.remove('is-hidden'); //Show select after loading
+      // Create options array for Slim Select
+      const options = data.map(({ name, id }) => ({
+        text: name,
+        value: id,
+      }));
+      // Set options for Slim Select
+      slimSelect.setData(options);
     })
+
+    //   breedSelectEl.insertAdjacentHTML('beforeend', optionsMarkup);
+    //   breedSelectEl.classList.remove('is-hidden'); //Show select after loading
     .catch(onError);
 }
 //Load breed selection
@@ -28,6 +42,7 @@ chooseBreed();
 //Event of selecting breed
 breedSelectEl.addEventListener('change', createMarkup);
 
+//Error
 function onError() {
   // Show error Message
   errorEl.classList.remove('is-hidden');
